@@ -18,7 +18,13 @@ const HomePage = () => {
             try {
                 const res = await api.get("/notes");
                 console.log(res.data);
-                setNotes(res.data);
+                if (Array.isArray(res.data)) {
+                    setNotes(res.data);
+                } else if (Array.isArray(res.data.notes)) {
+                    setNotes(res.data.notes); // if backend sends { notes: [...] }
+                } else {
+                    setNotes([]); // fallback if data is not an array
+                }
                 setIsRateLimited(false);
             } catch (error) {
                 console.log("Error fetching notes");
